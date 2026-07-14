@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heidelberg Portal UI - Excel Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Load Microsoft Office JS Library to talk directly with Excel Online -->
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .bg-heidelberg-dark { background-color: #004d40; }
+        .text-heidelberg-dark { color: #004d40; }
+        .border-heidelberg-dark { border-color: #004d40; }
+        .hover-heidelberg-dark:hover { background-color: #00332a; }
+        
+        .bg-heidelberg-accent { background-color: #4ade80; }
+        .text-heidelberg-accent { color: #4ade80; }
+        .border-heidelberg-accent { border-color: #4ade80; }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col custom-scrollbar text-slate-800 p-1 md:p-3">
+
+    <header class="bg-heidelberg-dark text-white rounded-2xl shadow-lg mb-4">
+        <div class="px-5 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-10 bg-white rounded-l-full border-r-4 border-heidelberg-dark flex justify-end items-center pr-1 shadow-inner">
+                    <div class="w-3 h-6 bg-heidelberg-accent rounded-full"></div>
+                </div>
+                <div>
+                    <h1 class="text-base font-extrabold tracking-tight">Heidelberg Materials</h1>
+                    <p class="text-[9px] text-emerald-300 font-bold tracking-wider uppercase">EXCEL ONLINE ACTIVE LINK</p>
+                </div>
+            </div>
+            
+            <div id="live-indicator" class="flex items-center gap-2 bg-teal-950 px-3 py-1 rounded-full border border-teal-800 text-[11px]">
+                <span id="sync-dot" class="w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse"></span>
+                <span id="sync-text" class="font-bold text-slate-300">Offline Fallback Mode</span>
+            </div>
+        </div>
+
+        <div class="px-5 pb-3">
+            <div class="flex bg-teal-950 p-1 rounded-lg border border-teal-800/60 justify-center w-full">
+                <button onclick="switchTab('form-tab')" id="btn-form-tab" class="flex-1 text-center py-2 rounded-md font-bold text-[11px] md:text-xs transition-all bg-emerald-500 text-white shadow-sm flex items-center justify-center gap-1.5">
+                    📄 Card Form
+                </button>
+                <button onclick="switchTab('db-tab')" id="btn-db-tab" class="flex-1 text-center py-2 rounded-md font-bold text-[11px] md:text-xs transition-all text-teal-200 hover:text-white flex items-center justify-center gap-1.5">
+                    📊 Live Database
+                </button>
+                <button onclick="switchTab('reminders-tab')" id="btn-reminders-tab" class="flex-1 text-center py-2 rounded-md font-bold text-[11px] md:text-xs transition-all text-teal-200 hover:text-white flex items-center justify-center gap-1.5">
+                    ⚠️ Expiries
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <div id="form-tab" class="tab-content block">
+            <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-200">
+                <div class="flex flex-col md:flex-row border-b-8 border-heidelberg-dark">
+                    <div class="bg-heidelberg-dark text-white p-5 md:w-3/4 rounded-br-3xl flex flex-col justify-between">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-black tracking-tight">KAD PEKERJA KONTRAKTOR</h2>
+                            <h3 class="text-[11px] md:text-xs font-bold text-gray-300 uppercase">AUTHORIZED CONTRACTOR WORKER CARD</h3>
+                            <h4 class="text-base md:text-lg font-black text-heidelberg-accent mt-0.5">HEIDELBERG MATERIALS</h4>
+                        </div>
+                        <div class="mt-3 border-t border-teal-800/80 pt-1.5">
+                            <p class="text-[9px] text-gray-300 font-medium leading-tight">Kad ini adalah hak milik Heidelberg Materials dan terpakai untuk semua bahagian perniagaan.</p>
+                            <p class="text-[8px] italic text-teal-200 leading-tight">This card is the property of Heidelberg Materials and applicable to all business lines.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 md:w-1/4 flex flex-col justify-between items-end bg-slate-50/70">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-10 bg-heidelberg-dark rounded-l-full border-r-4 border-white flex justify-end items-center pr-1 shadow-inner">
+                                <div class="w-3 h-6 bg-heidelberg-accent rounded-full"></div>
+                            </div>
+                            <div class="text-heidelberg-dark font-black text-sm leading-none">
+                                Heidelberg<br><span class="text-gray-500 font-bold text-[10px]">Materials</span>
+                            </div>
+                        </div>
+                        <div class="w-full mt-3 flex justify-end items-center gap-2">
+                            <div class="text-right text-[11px]">
+                                <div class="font-extrabold text-gray-800">No. Siri:</div>
+                                <div class="italic text-[9px] text-gray-500">Serial No:</div>
+                            </div>
+                            <input type="text" id="serialNo" class="border-b-2 border-slate-400 focus:border-emerald-500 outline-none w-28 px-1 text-center font-bold text-sm bg-transparent" placeholder="HM-XXXX">
+                        </div>
+                    </div>
+                </div>
+
+                <form id="cardForm" class="p-4 bg-white">
+                    <input type="hidden" id="editDocId" value="">
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                        <!-- LEFT PANEL: RACES & NATIONALITY -->
+                        <div class="lg:col-span-1 bg-heidelberg-dark text-white rounded-xl p-4 flex flex-col justify-between shadow-md">
+                            <div>
+                                <h5 class="text-center font-extrabold text-xs tracking-wider border-b border-teal-800 pb-2 mb-3">RACES</h5>
+                                
+                                <div class="grid grid-cols-2 gap-2 mb-4">
+                                    <label class="flex items-center gap-2 bg-teal-950/80 hover:bg-teal-950 border border-teal-800 p-2 rounded-lg cursor-pointer transition">
+                                        <input type="radio" name="race" value="MALAY" class="w-4 h-4 accent-emerald-400">
+                                        <span class="font-bold text-[10px] tracking-wide">MALAY</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 bg-teal-950/80 hover:bg-teal-950 border border-teal-800 p-2 rounded-lg cursor-pointer transition">
+                                        <input type="radio" name="race" value="CHINESE" class="w-4 h-4 accent-emerald-400">
+                                        <span class="font-bold text-[10px] tracking-wide">CHINESE</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 bg-teal-950/80 hover:bg-teal-950 border border-teal-800 p-2 rounded-lg cursor-pointer transition">
+                                        <input type="radio" name="race" value="INDIAN" class="w-4 h-4 accent-emerald-400">
+                                        <span class="font-bold text-[10px] tracking-wide">INDIAN</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 bg-teal-950/80 hover:bg-teal-950 border border-teal-800 p-2 rounded-lg cursor-pointer transition">
+                                        <input type="radio" name="race" value="OTHER" class="w-4 h-4 accent-emerald-400">
+                                        <span class="font-bold text-[10px] tracking-wide">OTHER</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="block text-center font-extrabold text-[11px] mb-1">Nationality</label>
+                                    <input type="text" id="nationality" class="w-full bg-white text-gray-900 font-bold rounded-lg px-2 py-1.5 text-center focus:ring-2 focus:ring-emerald-400 outline-none text-xs" placeholder="e.g. Malaysian">
+                                </div>
+
+                                <div class="mb-1">
+                                    <label class="block text-center font-extrabold text-[10px] mb-1">Malaysia Working Permit Number</label>
+                                    <input type="text" id="permitNumber" class="w-full bg-white text-gray-900 font-bold rounded-lg px-2 py-1.5 text-center focus:ring-2 focus:ring-emerald-400 outline-none text-xs" placeholder="e.g. WP-123456">
+                                </div>
+                            </div>
+
+                            <div class="border-t border-teal-800 pt-3 mt-4">
+                                <div class="text-center mb-3">
+                                    <div class="text-[9px] font-bold text-emerald-300 tracking-wider uppercase">NAMA, TANDATANGAN & COP</div>
+                                    <div class="text-[8px] italic text-gray-300">NAME, SIGNATURE & COMPANY STAMP</div>
+                                    <div class="h-8 border-b border-dashed border-teal-700"></div>
+                                </div>
+                                <div class="flex items-center gap-2 justify-between">
+                                    <span class="text-[9px] font-bold text-gray-300">DATE / TARIKH:</span>
+                                    <input type="date" id="formDate" class="bg-teal-950 border border-teal-800 rounded px-2 py-1 text-[10px] text-white outline-none focus:border-emerald-400 w-24">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CENTER PANEL: NAME, PASSPORT, VALIDATION -->
+                        <div class="lg:col-span-2 flex flex-col border border-gray-200 rounded-xl overflow-hidden shadow-md bg-white">
+                            <div class="divide-y divide-gray-100">
+                                <div class="grid grid-cols-3 items-center bg-slate-50/60">
+                                    <div class="p-2 border-r border-gray-200 bg-slate-100/50">
+                                        <div class="font-extrabold text-[11px] text-gray-800">NAMA</div>
+                                        <div class="text-[9px] italic text-gray-500 font-medium">NAME</div>
+                                    </div>
+                                    <div class="col-span-2 px-3">
+                                        <input type="text" id="empName" class="w-full bg-transparent outline-none font-bold text-gray-800 text-xs py-1.5 placeholder-gray-400" placeholder="Enter Contractor Full Name">
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 items-center bg-slate-50/60">
+                                    <div class="p-2 border-r border-gray-200 bg-slate-100/50">
+                                        <div class="font-extrabold text-[11px] text-gray-800">ID / NO PASPORT</div>
+                                        <div class="text-[9px] italic text-gray-500 font-medium">ID / PASSPORT NO.</div>
+                                    </div>
+                                    <div class="col-span-2 px-3">
+                                        <input type="text" id="empId" class="w-full bg-transparent outline-none font-bold text-gray-800 text-xs py-1.5 placeholder-gray-400" placeholder="Enter Passport / NRIC">
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 items-center bg-slate-50/60">
+                                    <div class="p-2 border-r border-gray-200 bg-slate-100/50">
+                                        <div class="font-extrabold text-[11px] text-gray-800">LOKASI</div>
+                                        <div class="text-[9px] italic text-gray-500 font-medium">LOCATION</div>
+                                    </div>
+                                    <div class="col-span-2 px-3">
+                                        <input type="text" id="location" class="w-full bg-transparent outline-none font-bold text-gray-800 text-xs py-1.5 placeholder-gray-400" placeholder="Workplace Location / Site">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Checkbox and Date Rules -->
+                            <div class="flex-grow p-3 space-y-3 bg-white">
+                                <!-- Checkbox: Passport -->
+                                <div class="flex flex-col sm:flex-row items-start gap-3 p-2.5 hover:bg-slate-50 rounded-lg transition border border-slate-100">
+                                    <div class="flex items-center h-5 gap-3">
+                                        <input type="checkbox" id="chkPassport" class="w-5 h-5 rounded border-gray-300 text-heidelberg-dark focus:ring-heidelberg-dark accent-heidelberg-dark cursor-pointer">
+                                        <div>
+                                            <label for="chkPassport" class="font-extrabold text-[11px] text-gray-800 block cursor-pointer">PASPORT YANG SAH</label>
+                                            <span class="text-[9px] italic text-gray-500 font-medium">VALID PASSPORT</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-full sm:w-auto sm:ml-auto">
+                                        <label class="block text-[8px] font-bold text-gray-600">TARIKH LUPUT / <span class="italic">EXPIRY</span></label>
+                                        <input type="date" id="datePassport" class="w-full sm:w-28 border-b border-gray-300 focus:border-emerald-500 outline-none text-[11px] py-0.5">
+                                    </div>
+                                </div>
+
+                                <!-- Checkbox: Work Permit -->
+                                <div class="flex flex-col sm:flex-row items-start gap-3 p-2.5 hover:bg-slate-50 rounded-lg transition border border-slate-100">
+                                    <div class="flex items-center h-5 gap-3">
+                                        <input type="checkbox" id="chkWorkPermit" class="w-5 h-5 rounded border-gray-300 text-heidelberg-dark focus:ring-heidelberg-dark accent-heidelberg-dark cursor-pointer">
+                                        <div>
+                                            <label for="chkWorkPermit" class="font-extrabold text-[10px] text-gray-800 block cursor-pointer leading-none">PERMIT YANG SAH</label>
+                                            <span class="text-[9px] italic text-gray-500 font-medium">VALID WORK PERMIT (NON-CITIZEN)</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-full sm:w-auto sm:ml-auto">
+                                        <label class="block text-[8px] font-bold text-gray-600">TARIKH LUPUT / <span class="italic">EXPIRY</span></label>
+                                        <input type="date" id="dateWorkPermit" class="w-full sm:w-28 border-b border-gray-300 focus:border-emerald-500 outline-none text-[11px] py-0.5">
+                                    </div>
+                                </div>
+
+                                <!-- Checkbox: Safety Induction -->
+                                <div class="flex flex-col sm:flex-row items-start gap-3 p-2.5 hover:bg-slate-50 rounded-lg transition border border-slate-100">
+                                    <div class="flex items-center h-5 gap-3">
+                                        <input type="checkbox" id="chkSafety" class="w-5 h-5 rounded border-gray-300 text-heidelberg-dark focus:ring-heidelberg-dark accent-heidelberg-dark cursor-pointer">
+                                        <div>
+                                            <label for="chkSafety" class="font-extrabold text-[10px] text-gray-800 block cursor-pointer leading-none">PEKERJA TELAH DILATIH INDUKSI KESELAMATAN</label>
+                                            <span class="text-[9px] italic text-gray-500 font-medium">WORKER HAS COMPLETED SAFETY INDUCTION TRAINING</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-full sm:w-auto sm:ml-auto">
+                                        <label class="block text-[8px] font-bold text-gray-600">TARIKH INDUKSI / <span class="italic">DATE</span></label>
+                                        <input type="date" id="dateSafety" class="w-full sm:w-28 border-b border-gray-300 focus:border-emerald-500 outline-none text-[11px] py-0.5">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT PANEL: VALID UNTIL & CONTRACTOR COMPANY -->
+                        <div class="lg:col-span-1 flex flex-col gap-3">
+                            <!-- Valid Until -->
+                            <div class="border-2 border-heidelberg-dark rounded-xl overflow-hidden flex flex-col flex-grow shadow-md">
+                                <div class="bg-heidelberg-dark text-white text-center py-1.5 px-3 font-extrabold leading-tight">
+                                    SAH SEHINGGA
+                                    <div class="italic text-[10px] font-medium text-emerald-300">VALID UNTIL</div>
+                                </div>
+                                <div class="flex-grow p-3 bg-emerald-50/10 flex flex-col justify-center items-center">
+                                    <input type="date" id="validUntil" class="w-full text-center font-bold text-sm border-b-2 border-heidelberg-dark bg-transparent py-0.5 outline-none focus:border-emerald-500">
+                                </div>
+                                <div class="bg-slate-100 text-heidelberg-dark text-center font-black text-[9px] py-1 tracking-wider uppercase border-t border-gray-200">
+                                    Heidelberg Materials
+                                </div>
+                            </div>
+
+                            <!-- Contractor Company -->
+                            <div class="border-2 border-heidelberg-dark rounded-xl overflow-hidden flex flex-col flex-grow shadow-md">
+                                <div class="bg-heidelberg-dark text-white text-center py-1.5 px-3 font-extrabold leading-tight">
+                                    NAMA SYARIKAT KONTRAKTOR
+                                    <div class="italic text-[10px] font-medium text-emerald-300 text-center">CONTRACTOR COMPANY NAME</div>
+                                </div>
+                                <div class="flex-grow p-3 bg-emerald-50/10 flex flex-col justify-center items-center">
+                                    <input type="text" id="companyName" class="w-full text-center font-extrabold text-xs border-b-2 border-heidelberg-dark bg-transparent py-0.5 outline-none focus:border-emerald-500 placeholder-gray-400" placeholder="Enter Company Name">
+                                </div>
+                                <div class="bg-slate-100 text-heidelberg-dark text-center font-black text-[9px] py-1 tracking-wider uppercase border-t border-gray-200">
+                                    Heidelberg Materials
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions Panel -->
+                    <div class="mt-4 bg-heidelberg-dark p-3 rounded-xl flex flex-col sm:flex-row flex-wrap justify-center gap-2 shadow-inner">
+                        <button type="button" onclick="handleFormSubmission()" id="submitBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold py-2 px-4 rounded-lg text-xs transition shadow-md flex-1 flex items-center justify-center gap-1">
+                            💾 SUBMIT CARD
+                        </button>
+                        <button type="button" onclick="handleFormUpdate()" id="updateBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-extrabold py-2 px-4 rounded-lg text-xs transition shadow-md flex-1 flex items-center justify-center gap-1 hidden">
+                            ✏️ UPDATE DATA
+                        </button>
+                        <button type="button" onclick="cancelEditMode()" id="cancelBtn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow-md flex-1 hidden">
+                            Cancel Edit
+                        </button>
+                        <button type="button" onclick="switchTab('db-tab')" class="bg-white hover:bg-slate-100 text-heidelberg-dark font-extrabold py-2 px-4 rounded-lg text-xs transition shadow-md flex-1">
+                            🔍 SEARCH DATABASE
+                        </button>
+                        <button type="button" onclick="resetCardForm()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow-md flex-1">
+                            ❌ CLEAR ALL
+                        </button>
+                    </div>
+
+                    <!-- Safety Banner Replica -->
+                    <div class="bg-heidelberg-dark border-t border-teal-800/60 p-3 mt-4 rounded-xl flex flex-col md:flex-row items-center gap-3 text-white">
+                        <div class="text-2xl">👷</div>
+                        <div class="flex-1 md:border-r border-teal-800 md:pr-3 text-center md:text-left">
+                            <div class="font-extrabold text-[10px] tracking-wider">KESELAMATAN ANDA, TANGGUNGJAWAB KITA BERSAMA</div>
+                            <div class="italic text-[9px] text-emerald-300">YOUR SAFETY, OUR SHARED RESPONSIBILITY</div>
+                        </div>
+                        <div class="text-2xl text-amber-400 hidden md:block">⚠️</div>
+                        <div class="flex-1 text-[9px] leading-snug text-center md:text-left">
+                            Kad ini mesti dipakai pada setiap masa di dalam kawasan kerja Heidelberg Materials dan hanya sah untuk lokasi yang dinyatakan pada kad ini.<br>
+                            <span class="italic text-teal-200">This card must be worn at all times within the Heidelberg Materials working area.</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 2: LIVE DATABASE VIEW ==================== -->
+        <div id="db-tab" class="tab-content hidden">
+            <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-200 p-4">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 pb-3 border-b border-gray-100">
+                    <div>
+                        <h3 class="text-base font-extrabold text-heidelberg-dark">Excel Live-Connected Directory</h3>
+                        <p class="text-[11px] text-gray-500 mt-0.5">Manage and view contractor cards directly stored in the spreadsheet</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                        <button onclick="exportToCsv()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition">
+                            📤 Export Backup CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Database Filters -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4 bg-slate-50 p-3 rounded-xl border border-gray-100">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 mb-1">Search Name / ID</label>
+                        <input type="text" id="searchFilter" oninput="applyFilters()" class="w-full border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-emerald-500" placeholder="Type to lookup...">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 mb-1">Company Filter</label>
+                        <input type="text" id="companyFilter" oninput="applyFilters()" class="w-full border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-emerald-500" placeholder="Search by Company...">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 mb-1">Race Filter</label>
+                        <select id="raceFilter" onchange="applyFilters()" class="w-full border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-emerald-500">
+                            <option value="">All Races</option>
+                            <option value="MALAY">MALAY</option>
+                            <option value="CHINESE">CHINESE</option>
+                            <option value="INDIAN">INDIAN</option>
+                            <option value="OTHER">OTHER</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 mb-1">Permit Status</label>
+                        <select id="permitFilter" onchange="applyFilters()" class="w-full border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-emerald-500">
+                            <option value="">All Permits</option>
+                            <option value="passport">Valid Passport Required</option>
+                            <option value="workPermit">Valid Work Permit Required</option>
+                            <option value="safety">Completed Safety Induction</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Live Data Grid -->
+                <div class="overflow-x-auto custom-scrollbar border border-gray-200 rounded-xl">
+                    <table class="w-full text-left text-xs text-gray-700 min-w-[1000px]">
+                        <thead class="bg-slate-100 text-[9px] text-gray-600 uppercase border-b border-gray-200">
+                            <tr>
+                                <th class="py-2.5 px-3 font-bold">Serial No.</th>
+                                <th class="py-2.5 px-3 font-bold">Contractor Name</th>
+                                <th class="py-2.5 px-3 font-bold">ID / Passport</th>
+                                <th class="py-2.5 px-3 font-bold">Company</th>
+                                <th class="py-2.5 px-3 font-bold">Location</th>
+                                <th class="py-2.5 px-3 font-bold">Race</th>
+                                <th class="py-2.5 px-3 font-bold">Passport Status</th>
+                                <th class="py-2.5 px-3 font-bold">Permit Status</th>
+                                <th class="py-2.5 px-3 font-bold">Safety Date</th>
+                                <th class="py-2.5 px-3 font-bold text-center">Sah Sehingga</th>
+                                <th class="py-2.5 px-3 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dbRows" class="divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="11" class="text-center py-12 text-gray-400 font-medium">
+                                    <div class="flex flex-col items-center justify-center gap-2">
+                                        <div class="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                                        <span>Reading active Excel table...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3 text-xs text-gray-500 flex justify-between items-center" id="recordsCount">
+                    Showing 0 submissions
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 3: EXPIRES REMINDER PANEL ==================== -->
+        <div id="reminders-tab" class="tab-content hidden">
+            <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-200 p-4 max-w-5xl mx-auto">
+                <div class="border-b border-gray-100 pb-3 mb-4">
+                    <h3 class="text-base font-extrabold text-rose-800 flex items-center gap-2">
+                        ⚠️ Document Expiry & Warning Reminders
+                    </h3>
+                    <p class="text-[11px] text-gray-500 mt-0.5">Scans active spreadsheet rows to find elements nearing or past expiry dates</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="p-3 bg-rose-50 border border-rose-100 rounded-xl flex items-center gap-3">
+                        <span class="text-2xl">🛑</span>
+                        <div>
+                            <h4 class="font-extrabold text-rose-900 text-sm md:text-base" id="expiredCount">0 Records</h4>
+                            <p class="text-[10px] text-rose-700 font-medium">Documents EXPIRED in Excel Sheet</p>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-center gap-3">
+                        <span class="text-2xl">⚠️</span>
+                        <div>
+                            <h4 class="font-extrabold text-amber-900 text-sm md:text-base" id="warningCount">0 Records</h4>
+                            <p class="text-[10px] text-amber-700 font-medium">Documents expiring within next 30 days</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="font-bold text-[10px] text-gray-700 uppercase tracking-wider">Detailed Expiry List:</h4>
+                    <div class="overflow-x-auto custom-scrollbar border border-gray-200 rounded-xl">
+                        <table class="w-full text-left text-xs text-gray-700">
+                            <thead class="bg-slate-100 text-[9px] text-gray-600 uppercase border-b border-gray-200">
+                                <tr>
+                                    <th class="py-2.5 px-3">Serial No.</th>
+                                    <th class="py-2.5 px-3">Contractor Name</th>
+                                    <th class="py-2.5 px-3">Company</th>
+                                    <th class="py-2.5 px-3">Flagged Document</th>
+                                    <th class="py-2.5 px-3 text-center">Expiry Date</th>
+                                    <th class="py-2.5 px-3 text-center">Days Left</th>
+                                    <th class="py-2.5 px-3 text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reminderRows" class="divide-y divide-gray-100">
+                                <tr>
+                                    <td colspan="7" class="text-center py-8 text-gray-400">
+                                        All contractor records are currently valid and healthy!
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Cover State -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-5 shadow-2xl flex items-center gap-3">
+            <div class="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            <span class="text-xs font-bold text-slate-800" id="loadingText">Updating Excel Online Sheet...</span>
+        </div>
+    </div>
+
+    <!-- Dialog Modals -->
+    <div id="alertModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-5 max-w-sm w-full shadow-2xl border border-gray-100 scale-95 transition-all">
+            <div class="flex items-center gap-2.5 mb-3">
+                <span id="alertIcon" class="text-2xl">💡</span>
+                <h4 id="alertTitle" class="text-base font-black text-slate-900">Information</h4>
+            </div>
+            <p id="alertMessage" class="text-xs text-slate-600 leading-relaxed mb-5"></p>
+            <div class="flex justify-end">
+                <button onclick="closeModal()" class="bg-heidelberg-dark hover-heidelberg-dark text-white font-extrabold px-4 py-2 rounded-lg text-xs transition">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-5 max-w-sm w-full shadow-2xl border border-gray-100">
+            <div class="flex items-center gap-2.5 mb-3">
+                <span class="text-2xl text-rose-500">❓</span>
+                <h4 class="text-base font-black text-slate-900">Confirm Action</h4>
+            </div>
+            <p id="confirmMessage" class="text-xs text-slate-600 leading-relaxed mb-5"></p>
+            <div class="flex justify-end gap-2">
+                <button onclick="closeConfirmModal(false)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-2 rounded-lg text-xs transition">
+                    Cancel
+                </button>
+                <button id="confirmYesBtn" onclick="closeConfirmModal(true)" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-4 py-2 rounded-lg text-xs transition shadow-md">
+                    Yes, Proceed
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-3 right-3 space-y-1.5 z-50"></div>
+
+    <footer class="text-center py-2 text-slate-500 text-[10px] mt-4 border-t border-slate-200">
+        Heidelberg Materials Office Web Add-in Portal. Powered by Office JS APIs.
+    </footer>
+
+    <script>
+        let databaseRecords = [];
+        let filteredRecords = [];
+        let excelAvailable = false;
+
+        // Initialize OfficeJS and verify attachment to active Excel Online worksheet
+        Office.onReady(function(info) {
+            if (info.host === Office.HostType.Excel) {
+                excelAvailable = true;
+                
+                // Update Badge Status to Online Sync
+                document.getElementById('sync-dot').className = "w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse";
+                document.getElementById('sync-text').innerText = "Excel Online Live Link";
+                
+                showToast("Connected directly to Excel Online!");
+                initializeExcelSheet();
+            } else {
+                // Degrade gracefully to LocalStorage offline sandbox
+                loadLocalBackupData();
+            }
+        });
+
+        window.onload = function() {
+            document.getElementById('formDate').value = new Date().toISOString().split('T')[0];
+            if (!excelAvailable) {
+                loadLocalBackupData();
+            }
+        };
+
+        /**
+         * Automatically structures the Excel Worksheet with headers if it is currently blank
+         */
+        async function initializeExcelSheet() {
+            try {
+                await Excel.run(async (context) => {
+                    const sheets = context.workbook.worksheets;
+                    let sheet = sheets.getItemOrNullObject("Database");
+                    await context.sync();
+
+                    if (sheet.isNullObject) {
+                        sheet = sheets.add("Database");
+                        
+                        // Set standard sheet headers matching database layout
+                        const headers = [[
+                            "Record ID", "Serial No", "Race", "Nationality", "Working Permit No", 
+                            "Contractor Name", "ID/Passport No", "Location", "Has Passport", 
+                            "Passport Expiry", "Has Work Permit", "Work Permit Expiry", 
+                            "Has Safety Induction", "Safety Date", "Valid Until", 
+                            "Contractor Company", "Date Submitted", "Status"
+                        ]];
+                        
+                        const headerRange = sheet.getRange("A1:R1");
+                        headerRange.values = headers;
+                        headerRange.format.fill.color = "#004d40"; // Heidelberg Corporate Green
+                        headerRange.format.font.color = "#FFFFFF";
+                        headerRange.format.font.bold = true;
+                        
+                        sheet.getUsedRange().format.autofitColumns();
+                    }
+                    await context.sync();
+                    fetchExcelRecords();
+                });
+            } catch (error) {
+                console.error("Failed to initialize database worksheet: ", error);
+                loadLocalBackupData();
+            }
+        }
+
+        /**
+         * Reads all spreadsheet columns dynamically and maps them into the portal's data engine
+         */
+        async function fetchExcelRecords() {
+            if (!excelAvailable) return;
+            
+            showLoading(true, "Syncing Excel records...");
+            try {
+                await Excel.run(async (context) => {
+                    const sheet = context.workbook.worksheets.getItem("Database");
+                    const range = sheet.getUsedRange();
+                    range.load("values");
+                    await context.sync();
+
+                    const rows = range.values;
+                    databaseRecords = [];
+                    
+                    // Skip index 0 as it represents the sheet column headers
+                    for (let i = 1; i < rows.length; i++) {
+                        const row = rows[i];
+                        if (!row[0]) continue; // Skip blank rows
+                        
+                        databaseRecords.push({
+                            id: row[0].toString(),
+                            serialNo: row[1] ? row[1].toString() : "",
+                            race: row[2] ? row[2].toString() : "OTHER",
+                            nationality: row[3] ? row[3].toString() : "",
+                            permitNumber: row[4] ? row[4].toString() : "",
+                            name: row[5] ? row[5].toString() : "",
+                            idNumber: row[6] ? row[6].toString() : "",
+                            location: row[7] ? row[7].toString() : "",
+                            hasPassport: row[8] ? row[8].toString() : "NO",
+                            passportExpiry: row[9] ? row[9].toString() : "",
+                            hasWorkPermit: row[10] ? row[10].toString() : "NO",
+                            workPermitExpiry: row[11] ? row[11].toString() : "",
+                            hasSafetyInduction: row[12] ? row[12].toString() : "NO",
+                            safetyDate: row[13] ? row[13].toString() : "",
+                            validUntil: row[14] ? row[14].toString() : "",
+                            company: row[15] ? row[15].toString() : "",
+                            formDate: row[16] ? row[16].toString() : "",
+                            status: row[17] ? row[17].toString() : "ACTIVE"
+                        });
+                    }
+                    
+                    showLoading(false);
+                    applyFilters();
+                    updateRemindersPanel();
+                });
+            } catch (err) {
+                console.warn("Falling back to local storage directory: ", err);
+                showLoading(false);
+                loadLocalBackupData();
+            }
+        }
+
+        function loadLocalBackupData() {
+            const raw = localStorage.getItem('heidelberg_excel_offline');
+            if (raw) {
+                databaseRecords = JSON.parse(raw);
+            } else {
+                databaseRecords = [
+                    {
+                        id: "fallback_demo_1",
+                        serialNo: "HM-5020",
+                        race: "MALAY",
+                        nationality: "Malaysian",
+                        permitNumber: "N/A",
+                        name: "Syed Ahmad Al-Haddad",
+                        idNumber: "910512-14-5399",
+                        location: "Shah Alam Depot",
+                        hasPassport: "YES",
+                        passportExpiry: "2030-05-12",
+                        hasWorkPermit: "NO",
+                        workPermitExpiry: "",
+                        hasSafetyInduction: "YES",
+                        safetyDate: "2026-01-20",
+                        validUntil: "2027-12-31",
+                        company: "Al-Haddad Logistics",
+                        formDate: "2026-07-01",
+                        status: "ACTIVE"
+                    }
+                ];
+                saveToLocalStorage();
+            }
+            applyFilters();
+            updateRemindersPanel();
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('heidelberg_excel_offline', JSON.stringify(databaseRecords));
+        }
+
+        function showLoading(visible, text = "Updating Excel Online Sheet...") {
+            const overlay = document.getElementById('loadingOverlay');
+            document.getElementById('loadingText').innerText = text;
+            if (visible) overlay.classList.remove('hidden');
+            else overlay.classList.add('hidden');
+        }
+
+        /**
+         * Submits card form data directly into active worksheet cells in real-time
+         */
+        async function handleFormSubmission() {
+            const formData = collectFormData();
+            if (!validateFormData(formData)) return;
+
+            if (!formData.serialNo.trim()) {
+                formData.serialNo = "HM-" + Math.floor(1000 + Math.random() * 9000);
+            }
+            formData.id = "rec_" + Date.now();
+            formData.status = calculateStatus(formData.validUntil);
+
+            showLoading(true, "Writing to Excel Online...");
+
+            if (excelAvailable) {
+                try {
+                    await Excel.run(async (context) => {
+                        const sheet = context.workbook.worksheets.getItem("Database");
+                        const range = sheet.getRange("A1048576").getEnd(Excel.KeyboardDirection.up);
+                        const writeRange = range.getOffsetRange(1, 0).getResizedRange(0, 17);
+                        
+                        writeRange.values = [[
+                            formData.id, formData.serialNo, formData.race, formData.nationality, formData.permitNumber,
+                            formData.name, formData.idNumber, formData.location, formData.hasPassport, formData.passportExpiry,
+                            formData.hasWorkPermit, formData.workPermitExpiry, formData.hasSafetyInduction, formData.safetyDate,
+                            formData.validUntil, formData.company, formData.formDate, formData.status
+                        ]];
+
+                        sheet.getUsedRange().format.autofitColumns();
+                        await context.sync();
+                        showToast("Card written into Excel Online successfully!");
+                        resetCardForm();
+                        fetchExcelRecords();
+                    });
+                } catch (err) {
+                    showLoading(false);
+                    showAppAlert("Sync Error", "Could not write to cloud worksheet. Falling back to local save.", "❌");
+                    saveLocalRecord(formData);
+                }
+            } else {
+                saveLocalRecord(formData);
+            }
+        }
+
+        /**
+         * Replaces an existing record row matching unique Record IDs in Column A
+         */
+        async function handleFormUpdate() {
+            const editId = document.getElementById('editDocId').value;
+            if (!editId) return;
+
+            const formData = collectFormData();
+            formData.id = editId;
+            if (!validateFormData(formData)) return;
+            formData.status = calculateStatus(formData.validUntil);
+
+            showLoading(true, "Updating Excel Online Sheet...");
+
+            if (excelAvailable) {
+                try {
+                    await Excel.run(async (context) => {
+                        const sheet = context.workbook.worksheets.getItem("Database");
+                        const range = sheet.getUsedRange();
+                        range.load("values");
+                        await context.sync();
+
+                        const values = range.values;
+                        let targetRow = -1;
+
+                        // Identify target row index where Record ID matches in Column A
+                        for (let i = 0; i < values.length; i++) {
+                            if (values[i][0] === editId) {
+                                targetRow = i + 1; // Convert 0-index to 1-index Excel Row
+                                break;
+                            }
+                        }
+
+                        if (targetRow !== -1) {
+                            const updateRange = sheet.getRange(`A${targetRow}:R${targetRow}`);
+                            updateRange.values = [[
+                                formData.id, formData.serialNo, formData.race, formData.nationality, formData.permitNumber,
+                                formData.name, formData.idNumber, formData.location, formData.hasPassport, formData.passportExpiry,
+                                formData.hasWorkPermit, formData.workPermitExpiry, formData.hasSafetyInduction, formData.safetyDate,
+                                formData.validUntil, formData.company, formData.formDate, formData.status
+                            ]];
+                            await context.sync();
+                            showToast("Excel row updated successfully!");
+                        }
+                        
+                        showLoading(false);
+                        cancelEditMode();
+                        fetchExcelRecords();
+                    });
+                } catch (err) {
+                    showLoading(false);
+                    showAppAlert("Sync Error", "Excel Online could not update. Fallback local update applied.", "❌");
+                    updateLocalRecord(editId, formData);
+                }
+            } else {
+                updateLocalRecord(editId, formData);
+            }
+        }
+
+        function saveLocalRecord(record) {
+            databaseRecords.unshift(record);
+            saveToLocalStorage();
+            showLoading(false);
+            showToast("Record saved to Local Directory!");
+            resetCardForm();
+            applyFilters();
+            updateRemindersPanel();
+        }
+
+        function updateLocalRecord(id, record) {
+            const index = databaseRecords.findIndex(r => r.id === id);
+            if (index !== -1) {
+                databaseRecords[index] = record;
+                saveToLocalStorage();
+            }
+            showLoading(false);
+            cancelEditMode();
+            applyFilters();
+            updateRemindersPanel();
+            showToast("Local record updated!");
+        }
+
+        /**
+         * Safely deletes a row in Excel Online matching the target unique record ID
+         */
+        async function deleteDocItem(id) {
+            showAppConfirm("Are you sure you want to remove this contractor from your worksheet?", async () => {
+                showLoading(true, "Deleting Excel Online row...");
+                if (excelAvailable) {
+                    try {
+                        await Excel.run(async (context) => {
+                            const sheet = context.workbook.worksheets.getItem("Database");
+                            const range = sheet.getUsedRange();
+                            range.load("values");
+                            await context.sync();
+
+                            const values = range.values;
+                            let targetRow = -1;
+
+                            for (let i = 0; i < values.length; i++) {
+                                if (values[i][0] === id) {
+                                    targetRow = i + 1;
+                                    break;
+                                }
+                            }
+
+                            if (targetRow !== -1) {
+                                const rowRange = sheet.getRange(`A${targetRow}:R${targetRow}`);
+                                rowRange.delete(Excel.DeleteBehavior.up);
+                                await context.sync();
+                                showToast("Spreadsheet row successfully deleted!");
+                            }
+                            fetchExcelRecords();
+                        });
+                    } catch (err) {
+                        showLoading(false);
+                        deleteLocalRecord(id);
+                    }
+                } else {
+                    deleteLocalRecord(id);
+                }
+            });
+        }
+
+        function deleteLocalRecord(id) {
+            databaseRecords = databaseRecords.filter(r => r.id !== id);
+            saveToLocalStorage();
+            showLoading(false);
+            showToast("Record deleted locally!");
+            applyFilters();
+            updateRemindersPanel();
+        }
+
+        function collectFormData() {
+            let race = "";
+            const raceRadios = document.getElementsByName('race');
+            for(let r of raceRadios) {
+                if(r.checked) race = r.value;
+            }
+
+            return {
+                serialNo: document.getElementById('serialNo').value,
+                name: document.getElementById('empName').value,
+                idNumber: document.getElementById('empId').value,
+                location: document.getElementById('location').value,
+                company: document.getElementById('companyName').value,
+                race: race,
+                nationality: document.getElementById('nationality').value,
+                permitNumber: document.getElementById('permitNumber').value,
+                hasPassport: document.getElementById('chkPassport').checked ? "YES" : "NO",
+                passportExpiry: document.getElementById('datePassport').value,
+                hasWorkPermit: document.getElementById('chkWorkPermit').checked ? "YES" : "NO",
+                workPermitExpiry: document.getElementById('dateWorkPermit').value,
+                hasSafetyInduction: document.getElementById('chkSafety').checked ? "YES" : "NO",
+                safetyDate: document.getElementById('dateSafety').value,
+                validUntil: document.getElementById('validUntil').value,
+                formDate: document.getElementById('formDate').value || new Date().toISOString().split('T')[0]
+            };
+        }
+
+        function validateFormData(data) {
+            if (!data.name.trim()) {
+                showAppAlert("Missing Information", "Please enter the Contractor Name.", "⚠️");
+                return false;
+            }
+            if (!data.idNumber.trim()) {
+                showAppAlert("Missing Information", "Please enter the ID / Passport No.", "⚠️");
+                return false;
+            }
+            if (!data.company.trim()) {
+                showAppAlert("Missing Information", "Please specify the Contractor Company Name.", "⚠️");
+                return false;
+            }
+            return true;
+        }
+
+        function calculateStatus(validUntil) {
+            if (!validUntil) return "ACTIVE";
+            const today = new Date();
+            const expiry = new Date(validUntil);
+            const days = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+            
+            if (days < 0) return "EXPIRED";
+            if (days <= 30) return "EXPIRING SOON";
+            return "ACTIVE";
+        }
+
+        window.resetCardForm = function() {
+            document.getElementById('cardForm').reset();
+            document.getElementById('editDocId').value = "";
+            document.getElementById('datePassport').value = "";
+            document.getElementById('dateWorkPermit').value = "";
+            document.getElementById('dateSafety').value = "";
+            document.getElementById('validUntil').value = "";
+            document.getElementById('formDate').value = new Date().toISOString().split('T')[0];
+        };
+
+        window.loadDocForEdit = function(id) {
+            const record = databaseRecords.find(r => r.id === id);
+            if (!record) return;
+
+            document.getElementById('editDocId').value = record.id;
+            document.getElementById('serialNo').value = record.serialNo || "";
+            document.getElementById('empName').value = record.name || "";
+            document.getElementById('empId').value = record.idNumber || "";
+            document.getElementById('location').value = record.location || "";
+            document.getElementById('nationality').value = record.nationality || "";
+            document.getElementById('permitNumber').value = record.permitNumber || "";
+            document.getElementById('datePassport').value = record.passportExpiry || "";
+            document.getElementById('dateWorkPermit').value = record.workPermitExpiry || "";
+            document.getElementById('dateSafety').value = record.safetyDate || "";
+            document.getElementById('validUntil').value = record.validUntil || "";
+            document.getElementById('companyName').value = record.company || "";
+            document.getElementById('formDate').value = record.formDate || "";
+
+            const raceRadios = document.getElementsByName('race');
+            for(let r of raceRadios) {
+                r.checked = (r.value === record.race);
+            }
+
+            document.getElementById('chkPassport').checked = (record.hasPassport === "YES");
+            document.getElementById('chkWorkPermit').checked = (record.hasWorkPermit === "YES");
+            document.getElementById('chkSafety').checked = (record.hasSafetyInduction === "YES");
+
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('updateBtn').classList.remove('hidden');
+            document.getElementById('cancelBtn').classList.remove('hidden');
+
+            switchTab('form-tab');
+            showToast("Row details loaded into Form Editor");
+        };
+
+        window.cancelEditMode = function() {
+            resetCardForm();
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('updateBtn').classList.add('hidden');
+            document.getElementById('cancelBtn').classList.add('hidden');
+        };
+
+        window.applyFilters = function() {
+            const searchVal = document.getElementById('searchFilter').value.toLowerCase();
+            const companyVal = document.getElementById('companyFilter').value.toLowerCase();
+            const raceVal = document.getElementById('raceFilter').value;
+            const permitVal = document.getElementById('permitFilter').value;
+
+            filteredRecords = databaseRecords.filter(item => {
+                const matchesSearch = !searchVal || 
+                    (item.name && item.name.toLowerCase().includes(searchVal)) || 
+                    (item.idNumber && item.idNumber.toLowerCase().includes(searchVal)) ||
+                    (item.serialNo && item.serialNo.toLowerCase().includes(searchVal));
+
+                const matchesCompany = !companyVal || 
+                    (item.company && item.company.toLowerCase().includes(companyVal));
+
+                const matchesRace = !raceVal || (item.race === raceVal);
+
+                let matchesPermit = true;
+                if (permitVal === "passport") matchesPermit = (item.hasPassport === "YES");
+                else if (permitVal === "workPermit") matchesPermit = (item.hasWorkPermit === "YES");
+                else if (permitVal === "safety") matchesPermit = (item.hasSafetyInduction === "YES");
+
+                return matchesSearch && matchesCompany && matchesRace && matchesPermit;
+            });
+
+            renderTableRows();
+        };
+
+        function renderTableRows() {
+            const tbody = document.getElementById('dbRows');
+            document.getElementById('recordsCount').innerText = "Displaying " + filteredRecords.length + " of " + databaseRecords.length + " spreadsheet rows";
+            
+            if (filteredRecords.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="11" class="text-center py-12 text-gray-400 font-medium">No matching contractor entries found inside your active sheet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filteredRecords.map(item => `
+                <tr class="hover:bg-slate-50 transition-colors border-b border-gray-100">
+                    <td class="py-2.5 px-3 font-bold text-gray-900">${item.serialNo || 'N/A'}</td>
+                    <td class="py-2.5 px-3 font-extrabold text-heidelberg-dark">${item.name || ''}</td>
+                    <td class="py-2.5 px-3 font-semibold text-slate-600">${item.idNumber || ''}</td>
+                    <td class="py-2.5 px-3 font-bold text-[11px]">${item.company || ''}</td>
+                    <td class="py-2.5 px-3 font-medium text-slate-500">${item.location || ''}</td>
+                    <td class="py-2.5 px-3">
+                        <span class="px-2 py-0.5 rounded text-[9px] font-black bg-slate-100 text-slate-800 border">${item.race || 'OTHER'}</span>
+                    </td>
+                    <td class="py-2.5 px-3 font-medium text-[10px]">
+                        <span class="${item.hasPassport === 'YES' ? 'text-emerald-600 font-bold' : 'text-slate-400'}">
+                            ${item.hasPassport === 'YES' ? '✅ Ex: ' + (item.passportExpiry || 'N/A') : '❌ No'}
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-3 font-medium text-[10px]">
+                        <span class="${item.hasWorkPermit === 'YES' ? 'text-emerald-600 font-bold' : 'text-slate-400'}">
+                            ${item.hasWorkPermit === 'YES' ? '✅ Ex: ' + (item.workPermitExpiry || 'N/A') : '❌ No'}
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-3 font-medium text-[10px]">
+                        <span class="${item.hasSafetyInduction === 'YES' ? 'text-emerald-600 font-bold' : 'text-slate-400'}">
+                            ${item.hasSafetyInduction === 'YES' ? '✅ On: ' + (item.safetyDate || 'N/A') : '❌ No'}
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-3 font-extrabold text-[10px] text-center ${getExpiryColor(item.validUntil)}">
+                        ${item.validUntil || 'N/A'}
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <div class="flex justify-center gap-1">
+                            <button onclick="loadDocForEdit('${item.id}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold transition">Edit</button>
+                            <button onclick="deleteDocItem('${item.id}')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-0.5 rounded text-[10px] font-bold transition">Del</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getExpiryColor(dateString) {
+            if (!dateString) return 'text-slate-400';
+            const today = new Date();
+            const date = new Date(dateString);
+            const timeDiff = date - today;
+            const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            
+            if (daysLeft < 0) return 'text-rose-600 font-bold bg-rose-50 px-2 py-0.5 rounded border border-rose-200';
+            if (daysLeft <= 30) return 'text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200';
+            return 'text-emerald-600';
+        }
+
+        function updateRemindersPanel() {
+            const today = new Date();
+            let expiredList = [];
+            let warningList = [];
+
+            databaseRecords.forEach(rec => {
+                const checkDoc = (docName, dateVal, isActive) => {
+                    if (!isActive || isActive === 'NO' || !dateVal) return;
+                    const d = new Date(dateVal);
+                    const diff = d - today;
+                    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                    
+                    if (days < 0) {
+                        expiredList.push({ rec, docName, dateVal, days, status: 'EXPIRED' });
+                    } else if (days <= 30) {
+                        warningList.push({ rec, docName, dateVal, days, status: 'EXPIRING' });
+                    }
+                };
+
+                checkDoc('Passport', rec.passportExpiry, rec.hasPassport === 'YES');
+                checkDoc('Work Permit', rec.workPermitExpiry, rec.hasWorkPermit === 'YES');
+                checkDoc('Card Permit (Valid Until)', rec.validUntil, true);
+            });
+
+            document.getElementById('expiredCount').innerText = expiredList.length + " Records";
+            document.getElementById('warningCount').innerText = warningList.length + " Records";
+
+            const tbody = document.getElementById('reminderRows');
+            const mergedList = [...expiredList, ...warningList];
+
+            if (mergedList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">All documents are safe, valid, and healthy! No renewals needed.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = mergedList.map(item => `
+                <tr class="hover:bg-slate-50 transition-colors border-b border-gray-100">
+                    <td class="py-2.5 px-3 font-bold text-gray-800">${item.rec.serialNo || 'N/A'}</td>
+                    <td class="py-2.5 px-3 font-extrabold text-slate-800">${item.rec.name}</td>
+                    <td class="py-2.5 px-3 font-semibold text-slate-500">${item.rec.company}</td>
+                    <td class="py-2.5 px-3 font-bold text-blue-900">${item.docName}</td>
+                    <td class="py-2.5 px-3 text-center font-mono font-medium text-[10px]">${item.dateVal}</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-[10px]">
+                        ${item.days < 0 ? `<span class="text-rose-600">${Math.abs(item.days)} days ago</span>` : `<span class="text-amber-600">${item.days} days left</span>`}
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <span class="px-2 py-0.5 rounded text-[9px] font-black ${item.status === 'EXPIRED' ? 'bg-rose-100 text-rose-800 border border-rose-200' : 'bg-amber-100 text-amber-800 border border-amber-200'}">
+                            ${item.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.exportToCsv = function() {
+            if (filteredRecords.length === 0) {
+                showAppAlert("Export Failed", "There are no records in the current view to export.", "❌");
+                return;
+            }
+
+            let csvContent = "\uFEFF"; 
+            const headers = [
+                "Serial No", "Race", "Nationality", "Working Permit Number", 
+                "Contractor Name", "ID/Passport No", "Location", "Has Passport", 
+                "Passport Expiry", "Has Work Permit", "Work Permit Expiry", 
+                "Has Safety Induction", "Safety Induction Date", "Valid Until", 
+                "Contractor Company", "Date Created"
+            ];
+            csvContent += headers.map(h => '"' + h + '"').join(",") + "\r\n";
+            
+            filteredRecords.forEach(item => {
+                const row = [
+                    item.serialNo || "", item.race || "OTHER", item.nationality || "", item.permitNumber || "",
+                    item.name || "", item.idNumber || "", item.location || "", item.hasPassport || "NO",
+                    item.passportExpiry || "", item.hasWorkPermit || "NO", item.workPermitExpiry || "",
+                    item.hasSafetyInduction || "NO", item.safetyDate || "", item.validUntil || "",
+                    item.company || "", item.formDate || ""
+                ];
+                csvContent += row.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(",") + "\r\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Heidelberg_Database_" + new Date().toISOString().split('T')[0] + ".csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast("Database downloaded locally!");
+        };
+
+        window.showAppAlert = function(title, message, icon = 'ℹ️') {
+            document.getElementById('alertIcon').innerText = icon;
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('alertModal').classList.remove('hidden');
+        };
+
+        window.closeModal = function() {
+            document.getElementById('alertModal').classList.add('hidden');
+        };
+
+        let currentConfirmCallback = null;
+        window.showAppConfirm = function(message, onConfirm) {
+            document.getElementById('confirmMessage').innerText = message;
+            currentConfirmCallback = onConfirm;
+            document.getElementById('confirmModal').classList.remove('hidden');
+        };
+
+        window.closeConfirmModal = function(isConfirmed) {
+            document.getElementById('confirmModal').classList.add('hidden');
+            if (isConfirmed && currentConfirmCallback) {
+                currentConfirmCallback();
+            }
+            currentConfirmCallback = null;
+        };
+
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = "flex items-center gap-2 px-3 py-2 rounded-xl shadow-xl border text-[11px] font-bold text-white transition-all duration-300 transform translate-y-2 opacity-0 " + (type === 'success' ? 'bg-emerald-500 border-emerald-400' : 'bg-rose-500 border-rose-400');
+            toast.innerHTML = "<span>" + (type === 'success' ? '✅' : '❌') + "</span> <span>" + message + "</span>";
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-y-2');
+            }, 50);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            const formBtn = document.getElementById('btn-form-tab');
+            const dbBtn = document.getElementById('btn-db-tab');
+            const remindersBtn = document.getElementById('btn-reminders-tab');
+
+            formBtn.className = "flex-1 text-center py-2 rounded-md font-bold text-xs transition-all text-teal-200 hover:text-white";
+            dbBtn.className = "flex-1 text-center py-2 rounded-md font-bold text-xs transition-all text-teal-200 hover:text-white";
+            remindersBtn.className = "flex-1 text-center py-2 rounded-md font-bold text-xs transition-all text-teal-200 hover:text-white";
+
+            if (tabId === 'form-tab') {
+                formBtn.className = "flex-1 text-center py-2 rounded-md font-bold text-xs transition-all bg-emerald-500 text-white shadow-sm flex items-center justify-center gap-1.5";
+            } else if (tabId === 'db-tab') {
+                dbBtn.className = "flex-1 text-center py-2 rounded-md font-bold text-xs transition-all bg-emerald-500 text-white shadow-sm flex items-center justify-center gap-1.5";
+                if (excelAvailable) {
+                    fetchExcelRecords();
+                } else {
+                    applyFilters();
+                }
+            } else if (tabId === 'reminders-tab') {
+                remindersBtn.className = "flex-1 text-center py-2 rounded-md font-bold text-xs transition-all bg-emerald-500 text-white shadow-sm flex items-center justify-center gap-1.5";
+                updateRemindersPanel();
+            }
+        };
+    </script>
+</body>
+</html>
